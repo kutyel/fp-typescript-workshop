@@ -1,9 +1,14 @@
-import { Option, pipe, String, Predicate } from 'effect'
+import { Option, pipe, String, Predicate, Effect } from 'effect'
 import { expect, test, describe } from 'bun:test'
 
 interface User {
   readonly id: number
   readonly name: string
+}
+
+interface Post {
+  readonly id: number
+  readonly title: string
 }
 
 describe('Functors', () => {
@@ -51,5 +56,23 @@ describe('Functors', () => {
     const safeNum = (n: string) => pipe(n, Number, Option.liftPredicate(Predicate.not(isNaN)))
     expect(safeNum('4')).toEqual(Option.some(4))
     expect(safeNum('foo')).toEqual(Option.none())
+  })
+
+  // Exercise 5
+  test(`Write a function that will getPost then toUpperCase the post's title.`, async () => {
+    // getPost :: number -> Effect<never, never, Post>
+    const getPost = (id: number) =>
+      Effect.gen(function* (_) {
+        yield* _(Effect.sleep('0.3 seconds'))
+        return { id, title: 'Love them futures' } as Post
+      })
+
+    // getPostThenUpper :: Effect<never, never, Uppercase<string>>
+    const getPostThenUpper = getPost(1).pipe(
+      Effect.map((x) => x.title),
+      Effect.map(String.toUpperCase)
+    )
+    const title = await Effect.runPromise(getPostThenUpper)
+    expect(title).toBe('LOVE THEM FUTURES')
   })
 })
