@@ -78,7 +78,7 @@ describe('Functors', () => {
   })
 
   // Exercise 6
-  test('Write a function that uses checkActive() and showWelcome() to grant access or return the error.', () => {
+  test('Write a function that uses `checkActive` to grant access or return the error.', () => {
     // checkActive :: User -> Either<String, User>
     const checkActive = (user: User) =>
       user.active ? Either.right(user) : Either.left('Your account is not active')
@@ -96,5 +96,40 @@ describe('Functors', () => {
     expect(eitherWelcome({ id: 2, name: 'Yannick', active: false })).toEqual(
       Either.left('Your account is not active')
     )
+  })
+
+  // Exercise 7
+  test('Write a validation function that checks for a length > 3.', () => {
+    // validateName :: string -> Either<String, String>
+    const validateName = (name: string) =>
+      pipe(name, (x) => (x.length > 3 ? Either.right(name) : Either.left('You need > 3')))
+    expect(validateName('hello')).toEqual(Either.right('hello'))
+    expect(validateName('fla')).toEqual(Either.left('You need > 3'))
+  })
+
+  // Exercise 8
+  test('Use `validateName` above and Either as a functor to save the user or return the error message.', () => {
+    // save :: string -> Effect<never, never, User>
+    const save = (name: string) => Effect.succeed({ name, id: 1 } as User)
+
+    // validateName :: string -> Either<String, String>
+    const validateName = (name: string) =>
+      pipe(name, (x) => (x.length > 3 ? Either.right(name) : Either.left('You need > 3')))
+
+    // HINT: Effect.match!
+    // register :: string -> Effect<never, never, string>
+    const register = (name: string) =>
+      pipe(
+        name,
+        validateName,
+        Effect.flatMap(save), // Either is a subtype of Effect! 😎
+        Effect.match({
+          onFailure: (error) => `Failure: ${error}`,
+          onSuccess: (user) => `Success: ${user.name} saved!`,
+        })
+      )
+
+    expect(Effect.runSync(register('flavio'))).toBe(`Success: flavio saved!`)
+    expect(Effect.runSync(register('foo'))).toBe('Failure: You need > 3')
   })
 })
