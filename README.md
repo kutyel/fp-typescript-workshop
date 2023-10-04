@@ -4,7 +4,7 @@
 
 # fp-typescript-workshop
 
-[![Build](https://github.com/kutyel/fp-typescript-workshop/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/kutyel/fp-typescript-workshop/actions/workflows/main.yml)
+[![CI Build](https://github.com/kutyel/fp-typescript-workshop/actions/workflows/main.yml/badge.svg)](https://github.com/kutyel/fp-typescript-workshop/actions/workflows/main.yml)
 
 Functional Programming in TypeScript!
 
