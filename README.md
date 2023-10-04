@@ -1,3 +1,7 @@
+<p align="center">
+    <img alt="lambda" src="./logo.png" width="200">
+</p>
+
 # fp-typescript-workshop
 
 [![Build](https://github.com/kutyel/fp-typescript-workshop/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/kutyel/fp-typescript-workshop/actions/workflows/main.yml)
