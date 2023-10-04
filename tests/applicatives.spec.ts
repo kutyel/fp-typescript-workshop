@@ -5,16 +5,17 @@ import { getPost, getComments, Post } from '..'
 
 describe('Applicatives', () => {
   // Exercise 1
-  test.skip('Write a function that adds two possibly null numbers together using Option.ap.', () => {
+  test('Write a function that adds two possibly null numbers together using Option.ap.', () => {
     // safeAdd :: Option<number> -> Option<number> -> Option<number>
     const safeAdd = (x: number | null, y: number | null) =>
       pipe(
-        Option.some(Number.sum),
-        Option.ap(Option.fromNullable(x)), // This errors out 😩
+        // We need to force TypeScript here to pick the curried version of Number.sum 🤓
+        Option.some<(a: number) => (b: number) => number>(Number.sum),
+        Option.ap(Option.fromNullable(x)),
         Option.ap(Option.fromNullable(y))
       )
     expect(safeAdd(2, 3)).toEqual(Option.some(5))
-    expect(safeAdd(null, 3)).toEqual(Option.some(3))
+    expect(safeAdd(null, 3)).toEqual(Option.none())
   })
 
   // Exercise 2
