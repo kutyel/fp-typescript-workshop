@@ -2,11 +2,13 @@
     <img alt="lambda" src="./logo.png" width="200">
 </p>
 
-# fp-typescript-workshop
+# Functional Programming in TypeScript Workshop
 
 [![CI Build](https://github.com/kutyel/fp-typescript-workshop/actions/workflows/main.yml/badge.svg)](https://github.com/kutyel/fp-typescript-workshop/actions/workflows/main.yml)
 
-Functional Programming in TypeScript!
+⚡️ Let's learn some functional programming together!
+
+We will be using the amazing [Effect.ts](https://effect.website/) library because it is designed from the ground up to work nicely with TypeScript! 😎
 
 ## Requirements
 
