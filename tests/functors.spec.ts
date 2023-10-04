@@ -79,15 +79,14 @@ describe('Functors', () => {
 
   // Exercise 6
   test('Write a function that uses `checkActive` to grant access or return the error.', () => {
-    // checkActive :: User -> Either<String, User>
-    const checkActive = (user: User) =>
+    const checkActive = (user: User): Either.Either<string, User> =>
       user.active ? Either.right(user) : Either.left('Your account is not active')
-    // eitherWelcome :: User -> Either<String, String>
+    // eitherWelcome :: User -> Either<string, string>
     const eitherWelcome = (user: User) =>
       pipe(
         user,
         checkActive,
-        Either.map((x: User) => x.name), // TypeScript needs our help here! 😢
+        Either.map((x) => x.name),
         Either.map((x) => `Welcome ${x}`)
       )
     expect(eitherWelcome({ id: 1, name: 'Flavio', active: true })).toEqual(
@@ -100,20 +99,18 @@ describe('Functors', () => {
 
   // Exercise 7
   test('Write a validation function that checks for a length > 3.', () => {
-    // validateName :: string -> Either<String, String>
-    const validateName = (name: string) =>
+    // validateName :: string -> Either<string, string>
+    const validateName = (name: string): Either.Either<string, string> =>
       pipe(name, (x) => (x.length > 3 ? Either.right(name) : Either.left('You need > 3')))
     expect(validateName('hello')).toEqual(Either.right('hello'))
     expect(validateName('fla')).toEqual(Either.left('You need > 3'))
   })
 
   // Exercise 8
-  test('Use `validateName` above and Either as a functor to save the user or return the error message.', () => {
+  test('Use `validateName` above and Either/Effect to save the user or return the error message.', () => {
     // save :: string -> Effect<never, never, User>
     const save = (name: string) => Effect.succeed({ name, id: 1 } as User)
-
-    // validateName :: string -> Either<String, String>
-    const validateName = (name: string) =>
+    const validateName = (name: string): Either.Either<string, string> =>
       pipe(name, (x) => (x.length > 3 ? Either.right(name) : Either.left('You need > 3')))
 
     // HINT: Effect.match!
@@ -130,6 +127,6 @@ describe('Functors', () => {
       )
 
     expect(Effect.runSync(register('flavio'))).toBe(`Success: flavio saved!`)
-    expect(Effect.runSync(register('foo'))).toBe('Failure: You need > 3')
+    expect(Effect.runSync(register('foo'))).toBe(`Failure: You need > 3`)
   })
 })
