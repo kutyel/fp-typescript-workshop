@@ -1,16 +1,7 @@
 import { Option, Either, pipe, String, Predicate, Effect } from 'effect'
 import { expect, test, describe } from 'bun:test'
 
-interface User {
-  readonly id: number
-  readonly name: string
-  readonly active?: boolean
-}
-
-interface Post {
-  readonly id: number
-  readonly title: string
-}
+import { User, getPost } from '..'
 
 describe('Functors', () => {
   // Exercise 1
@@ -60,14 +51,8 @@ describe('Functors', () => {
   })
 
   // Exercise 5
-  test(`Write a function that will getPost then toUpperCase the post's title.`, async () => {
+  test("Write a function that will `getPost` then `String.toUpperCase` the post's title.", async () => {
     // getPost :: number -> Effect<never, never, Post>
-    const getPost = (id: number) =>
-      Effect.gen(function* (_) {
-        yield* _(Effect.sleep('0.3 seconds'))
-        return { id, title: 'Love them futures' } as Post
-      })
-
     // getPostThenUpper :: Effect<never, never, Uppercase<string>>
     const getPostThenUpper = getPost(1).pipe(
       Effect.map((x) => x.title),
