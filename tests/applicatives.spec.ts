@@ -27,15 +27,14 @@ describe('Applicatives', () => {
   })
 
   // Exercise 3
-  test.skip('Run both `getPost` and `getComments` then render the page with both.', async () => {
-    const makeComments = (xs: string[]) =>
+  test('Run both `getPost` and `getComments` then render the page with both.', async () => {
+    const renderComments = (xs: string[]) =>
       xs.reduce((acc: string, c: string): string => `${acc}<li>${c}</li>`, '')
-    const render =
-      ({ title }: Post) =>
-      (cs: string[]) =>
-        `<div>${title}</div><ul>${makeComments(cs)}</ul>`
-    // renderDOM :: Effect<never,never,HTML>
-    const renderDOM = pipe(Option.lift2(render), getPost(2), getComments(2))
+    const render = ([post, comments]: [Post, string[]]) =>
+      `<div>${post.title}</div><ul>${renderComments(comments)}</ul>`
+    // HINT: Effect.all
+    // renderDOM :: Effect<never,never,string>
+    const renderDOM = Effect.all([getPost(1), getComments(1)]).pipe(Effect.map(render))
     const html = await Effect.runPromise(renderDOM)
     expect(html).toBe(
       '<div>Love them futures</div><ul><li>This book should be illegal</li><li>Monads are like space burritos</li></ul>'
