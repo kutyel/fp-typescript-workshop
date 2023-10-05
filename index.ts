@@ -17,6 +17,11 @@ export interface Post {
   readonly title: string
 }
 
+export interface Comment {
+  readonly postId: number
+  readonly body: string
+}
+
 export type EmptyObj = Record<PropertyKey, never>
 
 export const getPost = (id: number): Effect.Effect<never, never, Post> =>
@@ -25,10 +30,13 @@ export const getPost = (id: number): Effect.Effect<never, never, Post> =>
     return { id, title: 'Love them futures' }
   })
 
-export const getComments = (id: number): Effect.Effect<never, never, string[]> =>
+export const getComments = (postId: number): Effect.Effect<never, never, Comment[]> =>
   Effect.gen(function* (_) {
     yield* _(Effect.sleep('0.3 seconds'))
-    return ['This book should be illegal', 'Monads are like space burritos']
+    return [
+      { postId, body: 'This book should be illegal' },
+      { postId, body: 'Monads are like space burritos' },
+    ]
   })
 
 const program = Console.log('Hello, Functional World!')

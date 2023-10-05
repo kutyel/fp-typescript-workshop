@@ -2,7 +2,7 @@ import { Option, pipe, Effect, String, ReadonlyArray } from 'effect'
 import { expect, test, describe } from 'bun:test'
 import { sep } from 'path'
 
-import { User, EmptyObj } from '..'
+import { User, EmptyObj, getPost, getComments } from '..'
 
 describe('Monads', () => {
   // Exercise 1
@@ -44,5 +44,22 @@ describe('Monads', () => {
 
     const result = await Effect.runSync(logFilename)
     expect(result).toBe('monads.spec.ts')
+  })
+
+  // Exercise 3
+  test("Use `getPost` then pass the post's id to `getComments`.", async () => {
+    // getCommentsFromPost :: number -> Effect<never,never,Comment[]>
+    const getCommentsFromPost = (id: number) =>
+      pipe(
+        getPost(id),
+        Effect.flatMap((post) => getComments(post.id))
+      )
+
+    const comments = await Effect.runPromise(getCommentsFromPost(13))
+    expect(comments.map((x) => x.postId)).toEqual([13, 13])
+    expect(comments.map((x) => x.body)).toEqual([
+      'This book should be illegal',
+      'Monads are like space burritos',
+    ])
   })
 })

@@ -1,7 +1,7 @@
 import { Option, pipe, Number, Effect } from 'effect'
 import { expect, test, describe } from 'bun:test'
 
-import { getPost, getComments, Post } from '..'
+import { getPost, getComments, Post, Comment } from '..'
 
 describe('Applicatives', () => {
   // Exercise 1
@@ -28,11 +28,13 @@ describe('Applicatives', () => {
 
   // Exercise 3
   test('Run both `getPost` and `getComments` then render the page with both.', async () => {
-    const renderComments = (xs: string[]) =>
-      xs.reduce((acc: string, c: string): string => `${acc}<li>${c}</li>`, '')
-    const render = ([post, comments]: [Post, string[]]) =>
+    const renderComments = (xs: Comment[]) =>
+      xs.reduce((acc: string, c: Comment): string => `${acc}<li>${c.body}</li>`, '')
+    const render = ([post, comments]: [Post, Comment[]]) =>
       `<div>${post.title}</div><ul>${renderComments(comments)}</ul>`
+
     // HINT: Effect.all
+    // REMINDER: the postId is totally irrelevant for now
     // renderDOM :: Effect<never,never,string>
     const renderDOM = Effect.all([getPost(1), getComments(1)]).pipe(Effect.map(render))
 
