@@ -33,13 +33,11 @@ export const initial = (user?: User) =>
 // }
 // BONUS POINTS: Option.liftPredicate
 // MOAR BONUS POINTS: Predicate.not
-
-// safeNum :: string -> Option<number>
-export const safeNum = (n: string) => pipe(n, Number, Option.liftPredicate(Predicate.not(isNaN)))
+export const safeNum = (n: string): Option.Option<number> =>
+  pipe(Number(n), Option.liftPredicate(Predicate.not(isNaN)))
 
 // Exercise 5
 // Write a function that will `getPost` then `String.toUpperCase` the post's title.
-
 // getPostThenUpper :: Effect<never, never, Uppercase<string>>
 export const getPostThenUpper = getPost(1).pipe(
   Effect.map((x) => x.title),
@@ -53,31 +51,24 @@ const checkActive = (user: User): Either.Either<string, User> =>
 // eitherWelcome :: User -> Either<string, string>
 export const eitherWelcome = (user: User) =>
   pipe(
-    user,
-    checkActive,
+    checkActive(user),
     Either.map((x) => x.name),
     Either.map((x) => `Welcome ${x}`)
   )
 
 // Exercise 7
 // Write a validation function that checks for a length > 3.
-
-// validateName :: string -> Either<string, string>
 export const validateName = (name: string): Either.Either<string, string> =>
-  pipe(name, (x) => (x.length > 3 ? Either.right(name) : Either.left('You need > 3')))
+  name.length > 3 ? Either.right(name) : Either.left('You need > 3')
 
 // Exercise 8
-// Use `validateName` above and Either/Effect to save the user or return the error message.
-
-// save :: string -> Effect<never, never, User>
+// Use `validateName` above and Either/Effect to `save` the user or return the error message.
 const save = (name: string): Effect.Effect<never, never, User> => Effect.succeed({ name, id: 1 })
 
 // HINT: Effect.match!
-// register :: string -> Effect<never, never, string>
-export const register = (name: string) =>
+export const register = (name: string): Effect.Effect<never, never, string> =>
   pipe(
-    name,
-    validateName,
+    validateName(name),
     Effect.flatMap(save), // Either is a subtype of Effect! 😎
     Effect.match({
       onFailure: (error) => `Failure: ${error}`,
