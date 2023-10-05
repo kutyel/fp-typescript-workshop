@@ -4,12 +4,20 @@ export interface User {
   readonly id: number
   readonly name: string
   readonly active?: boolean
+  readonly address?: Address
+}
+
+interface Address {
+  readonly city: string
+  readonly street: { number: number; name: string }
 }
 
 export interface Post {
   readonly id: number
   readonly title: string
 }
+
+export type EmptyObj = Record<PropertyKey, never>
 
 export const getPost = (id: number): Effect.Effect<never, never, Post> =>
   Effect.gen(function* (_) {
