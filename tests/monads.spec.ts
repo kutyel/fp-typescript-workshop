@@ -1,4 +1,4 @@
-import { Option, pipe, Effect, String, ReadonlyArray } from 'effect'
+import { pipe, Option, Either, Effect, String, ReadonlyArray } from 'effect'
 import { expect, test, describe } from 'bun:test'
 import { sep } from 'path'
 
@@ -61,5 +61,37 @@ describe('Monads', () => {
       'This book should be illegal',
       'Monads are like space burritos',
     ])
+  })
+
+  // Exercise 4
+  test('Use `validateEmail`, `addToMailingList`, and `emailBlast` to implement `joinMailingList`.', () => {
+    class InvalidEmail extends Error {
+      readonly _tag = 'InvalidEmail'
+    }
+
+    //  addToMailingList :: Email -> Effect<never,never,Email[]>
+    const addToMailingList = (email: string) => Effect.succeed([email])
+    // emailBlast :: Email[] -> Effect<never,never,string>
+    const emailBlast = (list: string[]) => Effect.succeed(`emailed: ${list.join(',')}`)
+    // validateEmail :: Email -> Either<InvalidEmail,Email>
+    const validateEmail = (x: string): Either.Either<InvalidEmail, string> =>
+      x.match(/\S+@\S+\.\S+/) ? Either.right(x) : Either.left(new InvalidEmail())
+    // joinMailingList :: Email -> Either<never,string,Effect<never,never,string>>
+    const joinMailingList = (email: string) =>
+      pipe(
+        validateEmail(email),
+        // type safe error catching!! 🚷
+        Effect.catchTag('InvalidEmail', () => Effect.fail('invalid email')),
+        Effect.match({
+          onFailure: (error) => `Failure: ${error}`,
+          onSuccess: (email) => pipe(email, addToMailingList, Effect.flatMap(emailBlast)),
+        })
+      )
+
+    expect(Effect.runSync(joinMailingList('notanemail'))).toBe('Failure: invalid email')
+    const program = Effect.runSync(joinMailingList('flaviocorpa@gmail.com'))
+    if (typeof program !== 'string') {
+      expect(Effect.runSync(program)).toBe('emailed: flaviocorpa@gmail.com')
+    }
   })
 })
