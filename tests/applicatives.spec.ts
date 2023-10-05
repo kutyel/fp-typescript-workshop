@@ -5,7 +5,7 @@ import { getPost, getComments, Post, Comment } from '..'
 
 describe('Applicatives', () => {
   // Exercise 1
-  test('Write a function that adds two possibly null numbers together using Option.ap.', () => {
+  test('Write a function that adds two possibly null numbers together using `Option.ap`.', () => {
     // safeAdd :: Nullable<number> -> Nullable<number> -> Option<number>
     const safeAdd = (x: number | null, y: number | null) =>
       pipe(
@@ -19,14 +19,23 @@ describe('Applicatives', () => {
   })
 
   // Exercise 2
-  test('Now write a function that takes 2 Option parameters and adds them. Use `Option.lift2` instead.', () => {
+  test('Now write a function that takes 2 Option parameters and adds them. Use `Option.zipWith`.', () => {
+    // safeAdd :: Option<number> -> Option<number> -> Option<number>
+    const safeAdd = (op1: Option.Option<number>, op2: Option.Option<number>) =>
+      Option.zipWith(op1, op2, Number.sum)
+    expect(safeAdd(Option.some(2), Option.some(3))).toEqual(Option.some(5))
+    expect(safeAdd(Option.none(), Option.some(3))).toEqual(Option.none())
+  })
+
+  // Exercise 3
+  test('Now write a function that takes 2 Option parameters and adds them. Use `Option.lift2`.', () => {
     // safeAdd :: Option<number> -> Option<number> -> Option<number>
     const safeAdd = Option.lift2(Number.sum)
     expect(safeAdd(Option.some(2), Option.some(3))).toEqual(Option.some(5))
     expect(safeAdd(Option.none(), Option.some(3))).toEqual(Option.none())
   })
 
-  // Exercise 3
+  // Exercise 4
   test('Run both `getPost` and `getComments` then render the page with both.', async () => {
     const renderComments = (xs: Comment[]) =>
       xs.reduce((acc: string, c: Comment): string => `${acc}<li>${c.body}</li>`, '')
@@ -44,7 +53,7 @@ describe('Applicatives', () => {
     )
   })
 
-  // Exercise 4
+  // Exercise 5
   test('Write an Effect that gets both player1 and player2 from the cache and starts the game.', () => {
     const storage = new Map<string, string>([
       ['player1', 'toby'],
