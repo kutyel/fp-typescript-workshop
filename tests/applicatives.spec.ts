@@ -7,6 +7,7 @@ import {
   safeAddWithLift,
   renderDOM,
   renderAllDOM,
+  renderGenDOM,
   startGame,
 } from '../src/applicatives'
 
@@ -35,6 +36,13 @@ describe('Applicatives', () => {
 
   test('Do the same thing as above but now render all posts using `Effect.all`.', async () => {
     const html = await Effect.runPromise(renderAllDOM)
+    expect(html).toBe(
+      '<div>Love them futures</div><ul><li>This book should be illegal</li><li>Monads are like space burritos</li></ul>'
+    )
+  })
+
+  test('Do the same thing as above but now using generator syntax!', async () => {
+    const html = await Effect.runPromise(renderGenDOM)
     expect(html).toBe(
       '<div>Love them futures</div><ul><li>This book should be illegal</li><li>Monads are like space burritos</li></ul>'
     )

@@ -50,6 +50,14 @@ export const renderAllDOM: Effect.Effect<never, never, string> = Effect.all([
 ]).pipe(Effect.map(renderAll))
 
 // Exercise 6
+// Do the same thing as above but now using generator syntax!
+export const renderGenDOM: Effect.Effect<never, never, string> = Effect.gen(function* (_) {
+  const posts = yield* _(getPost(1))
+  const comments = yield* _(getComments(1))
+  return renderAll([posts, comments])
+})
+
+// Exercise 7
 // Write an Effect that gets both player1 and player2 from the cache and starts the game.
 const storage = new Map<string, string>([
   ['player1', 'toby'],
