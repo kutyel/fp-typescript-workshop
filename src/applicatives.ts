@@ -1,4 +1,4 @@
-import { pipe, Option, Number, Effect } from 'effect'
+import { pipe, Option, Either, Number, Effect } from 'effect'
 
 import { getPost, getComments, Post, Comment } from '..'
 
@@ -28,17 +28,28 @@ export const safeAddWithLift = Option.lift2(Number.sum)
 // Run both `getPost` and `getComments` then render the page with both.
 const renderComments = (xs: Comment[]) =>
   xs.reduce((acc: string, c: Comment): string => `${acc}<li>${c.body}</li>`, '')
-const render = ([post, comments]: [Post, Comment[]]) =>
+
+const render = (post: Post) => (comments: Comment[]) =>
   `<div>${post.title}</div><ul>${renderComments(comments)}</ul>`
 
-// HINT: Effect.all
 // REMINDER: the postId is totally irrelevant
-export const renderDOM: Effect.Effect<never, never, string> = Effect.all([
-  getPost(1),
-  getComments(1),
-]).pipe(Effect.map(render))
+export const renderDOM: Effect.Effect<never, never, string> = pipe(
+  Effect.succeed(render),
+  Effect.ap(getPost(1)),
+  Effect.ap(getComments(1))
+)
 
 // Exercise 5
+// Do the same thing as above but now render all posts using `Effect.all`.
+const renderAll = ([post, comments]: [Post, Comment[]]) =>
+  `<div>${post.title}</div><ul>${renderComments(comments)}</ul>`
+
+export const renderAllDOM: Effect.Effect<never, never, string> = Effect.all([
+  getPost(1),
+  getComments(1),
+]).pipe(Effect.map(renderAll))
+
+// Exercise 6
 // Write an Effect that gets both player1 and player2 from the cache and starts the game.
 const storage = new Map<string, string>([
   ['player1', 'toby'],
@@ -46,14 +57,19 @@ const storage = new Map<string, string>([
 ])
 const getFromCache = (x: string): Effect.Effect<never, string, string> =>
   storage.has(x) ? Effect.succeed(storage.get(x) ?? 'Not found') : Effect.fail('Player not found')
-const game = ([p1, p2]: [string, string]): string => `${p1} vs ${p2}`
+const game =
+  (p1: string) =>
+  (p2: string): string =>
+    `${p1} vs ${p2}`
 
-export const startGame = (p1: string, p2: string): Effect.Effect<never, never, string> =>
+// HINT: Effect.either
+export const startGame = (
+  p1: string,
+  p2: string
+): Effect.Effect<never, never, Either.Either<string, string>> =>
   pipe(
-    Effect.all([getFromCache(p1), getFromCache(p2)]),
-    Effect.map(game),
-    Effect.match({
-      onFailure: (error) => `Failure: ${error}`,
-      onSuccess: (str) => `Game started: ${str}!`,
-    })
+    Effect.succeed(game),
+    Effect.ap(getFromCache(p1)),
+    Effect.ap(getFromCache(p2)),
+    Effect.either
   )
