@@ -25,8 +25,14 @@ $ brew install bun
 
 ## Run the tests and solve the exercises!
 
+There are 3 rounds of exercises: `functors`, `applicatives` and `monads`.
+
+My recommendation is that you run only the specific test file in watch mode and solve the exercises in that order before moving to the next challenge. 😉
+
 ```sh
-$ npm run test:watch
+$ npm t -- functors --watch
+$ npm t -- applicatives --watch
+$ npm t -- monads --watch
 ```
 
 Happy coding! ⚡️
