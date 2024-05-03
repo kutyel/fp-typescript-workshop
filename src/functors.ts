@@ -1,4 +1,5 @@
 import { pipe, Option, Either, String, Predicate, Effect } from 'effect'
+import { unify } from 'effect/Unify'
 
 import { User, getPost } from '..'
 
@@ -46,8 +47,8 @@ export const getPostThenUpper = getPost(1).pipe(
 
 // Exercise 6
 // Write a function that uses `checkActive` to grant access or return the error.
-const checkActive = (user: User): Either.Either<string, User> =>
-  user.active ? Either.right(user) : Either.left('Your account is not active')
+const checkActive = (user: User) =>
+  unify(user.active ? Either.right(user) : Either.left('Your account is not active'))
 // eitherWelcome :: User -> Either<string, string>
 export const eitherWelcome = (user: User) =>
   pipe(
@@ -63,10 +64,10 @@ export const validateName = (name: string): Either.Either<string, string> =>
 
 // Exercise 8
 // Use `validateName` above and Either/Effect to `save` the user or return the error message.
-const save = (name: string): Effect.Effect<never, never, User> => Effect.succeed({ name, id: 1 })
+const save = (name: string) => Effect.succeed({ name, id: 1 })
 
 // HINT: Effect.match!
-export const register = (name: string): Effect.Effect<never, never, string> =>
+export const register = (name: string) =>
   pipe(
     validateName(name),
     Effect.flatMap(save), // Either is a subtype of Effect! 😎

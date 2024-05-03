@@ -1,4 +1,4 @@
-import { pipe, Option, Either, Number, Effect } from 'effect'
+import { pipe, Option, Number, Effect } from 'effect'
 
 import { getPost, getComments, Post, Comment } from '..'
 
@@ -33,7 +33,7 @@ const render = (post: Post) => (comments: Comment[]) =>
   `<div>${post.title}</div><ul>${renderComments(comments)}</ul>`
 
 // REMINDER: the postId is totally irrelevant
-export const renderDOM: Effect.Effect<never, never, string> = pipe(
+export const renderDOM = pipe(
   Effect.succeed(render),
   Effect.ap(getPost(1)),
   Effect.ap(getComments(1))
@@ -44,16 +44,13 @@ export const renderDOM: Effect.Effect<never, never, string> = pipe(
 const renderAll = ([post, comments]: [Post, Comment[]]) =>
   `<div>${post.title}</div><ul>${renderComments(comments)}</ul>`
 
-export const renderAllDOM: Effect.Effect<never, never, string> = Effect.all([
-  getPost(1),
-  getComments(1),
-]).pipe(Effect.map(renderAll))
+export const renderAllDOM = Effect.all([getPost(1), getComments(1)]).pipe(Effect.map(renderAll))
 
 // Exercise 6
 // Do the same thing as above but now using generator syntax!
-export const renderGenDOM: Effect.Effect<never, never, string> = Effect.gen(function* (_) {
-  const posts = yield* _(getPost(1))
-  const comments = yield* _(getComments(1))
+export const renderGenDOM = Effect.gen(function* () {
+  const posts = yield* getPost(1)
+  const comments = yield* getComments(1)
   return renderAll([posts, comments])
 })
 
@@ -63,7 +60,7 @@ const storage = new Map<string, string>([
   ['player1', 'toby'],
   ['player2', 'sally'],
 ])
-const getFromCache = (x: string): Effect.Effect<never, string, string> =>
+const getFromCache = (x: string) =>
   storage.has(x) ? Effect.succeed(storage.get(x) ?? 'Not found') : Effect.fail('Player not found')
 const game =
   (p1: string) =>
@@ -71,10 +68,7 @@ const game =
     `${p1} vs ${p2}`
 
 // HINT: Effect.either
-export const startGame = (
-  p1: string,
-  p2: string
-): Effect.Effect<never, never, Either.Either<string, string>> =>
+export const startGame = (p1: string, p2: string) =>
   pipe(
     Effect.succeed(game),
     Effect.ap(getFromCache(p1)),

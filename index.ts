@@ -24,15 +24,15 @@ export interface Comment {
 
 export type EmptyObj = Record<PropertyKey, never>
 
-export const getPost = (id: number): Effect.Effect<never, never, Post> =>
-  Effect.gen(function* (_) {
-    yield* _(Effect.sleep('0.3 seconds'))
+export const getPost = (id: number) =>
+  Effect.gen(function* () {
+    yield* Effect.sleep('0.3 seconds')
     return { id, title: 'Love them futures' }
   })
 
-export const getComments = (postId: number): Effect.Effect<never, never, Comment[]> =>
-  Effect.gen(function* (_) {
-    yield* _(Effect.sleep('0.3 seconds'))
+export const getComments = (postId: number) =>
+  Effect.gen(function* () {
+    yield* Effect.sleep('0.3 seconds')
     return [
       { postId, body: 'This book should be illegal' },
       { postId, body: 'Monads are like space burritos' },
