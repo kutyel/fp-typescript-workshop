@@ -37,11 +37,10 @@ class InvalidEmail extends Error {
   readonly _tag = 'InvalidEmail'
 }
 
-// addToMailingList :: Email -> Effect<never,never,Email[]>
-const addToMailingList = (email: Email) => Effect.succeed([email])
-// emailBlast :: Email[] -> Effect<never,never,string>
-const emailBlast = (list: Email[]) => Effect.succeed(`emailed: ${list.join(',')}`)
-// validateEmail :: Email -> Either<InvalidEmail,Email>
+const addToMailingList = (email: Email): Effect.Effect<Email[], never, never> =>
+  Effect.succeed([email])
+const emailBlast = (list: Email[]): Effect.Effect<string, never, never> =>
+  Effect.succeed(`emailed: ${list.join(',')}`)
 const validateEmail = (x: Email): Either.Either<Email, InvalidEmail> =>
   x.match(/\S+@\S+\.\S+/) ? Either.right(x) : Either.left(new InvalidEmail())
 

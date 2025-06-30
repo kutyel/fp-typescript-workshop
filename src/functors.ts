@@ -38,8 +38,7 @@ export const safeNum = (n: string): Option.Option<number> =>
 
 // Exercise 5
 // Write a function that will `getPost` then `String.toUpperCase` the post's title.
-// getPostThenUpper :: Effect<never, never, Uppercase<string>>
-export const getPostThenUpper = getPost(1).pipe(
+export const getPostThenUpper: Effect.Effect<Uppercase<string>, never, never> = getPost(1).pipe(
   Effect.map((x) => x.title),
   Effect.map(String.toUpperCase)
 )
