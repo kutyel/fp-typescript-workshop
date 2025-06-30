@@ -13,6 +13,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "@effect/language-service": "^0.23.3",
     "effect": "^3.16.10"
   }
 }
