@@ -1,5 +1,4 @@
 import { pipe, Option, Either, Effect, String, Array } from 'effect'
-import { unify } from 'effect/Unify'
 import { sep } from 'path'
 
 import { User, EmptyObj, getPost, getComments } from '..'
@@ -43,8 +42,8 @@ const addToMailingList = (email: Email) => Effect.succeed([email])
 // emailBlast :: Email[] -> Effect<never,never,string>
 const emailBlast = (list: Email[]) => Effect.succeed(`emailed: ${list.join(',')}`)
 // validateEmail :: Email -> Either<InvalidEmail,Email>
-const validateEmail = (x: Email) =>
-  unify(x.match(/\S+@\S+\.\S+/) ? Either.right(x) : Either.left(new InvalidEmail()))
+const validateEmail = (x: Email): Either.Either<Email, InvalidEmail> =>
+  x.match(/\S+@\S+\.\S+/) ? Either.right(x) : Either.left(new InvalidEmail())
 
 // HINT: Use `Effect.matchEffect` to avoid nested Effects.
 // HINT: Use `Effect.catchTag` to catch the error.

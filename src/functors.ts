@@ -1,5 +1,4 @@
 import { pipe, Option, Either, String, Predicate, Effect } from 'effect'
-import { unify } from 'effect/Unify'
 
 import { User, getPost } from '..'
 
@@ -47,8 +46,9 @@ export const getPostThenUpper = getPost(1).pipe(
 
 // Exercise 6
 // Write a function that uses `checkActive` to grant access or return the error.
-const checkActive = (user: User) =>
-  unify(user.active ? Either.right(user) : Either.left('Your account is not active'))
+const checkActive = (user: User): Either.Either<User, string> =>
+  user.active ? Either.right(user) : Either.left('Your account is not active')
+
 // eitherWelcome :: User -> Either<string, string>
 export const eitherWelcome = (user: User) =>
   pipe(

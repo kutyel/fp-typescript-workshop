@@ -10,9 +10,9 @@
     "bun-types": "latest"
   },
   "peerDependencies": {
-    "typescript": "^5.6.3"
+    "typescript": "^5.8.3"
   },
   "dependencies": {
-    "effect": "^3.9.2"
+    "effect": "^3.16.10"
   }
 }
