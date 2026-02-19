@@ -8,7 +8,7 @@
 
 ⚡️ Let's learn some functional programming together!
 
-We will be using the amazing [Effect.ts](https://effect.website/) library because it is designed from the ground up to work nicely with TypeScript! 😎
+We will be using the amazing [Effect.ts](https://effect.website/) library (v4) because it is designed from the ground up to work nicely with TypeScript! 😎
 
 ## Requirements
 
@@ -30,9 +30,9 @@ There are 3 rounds of exercises: `functors`, `applicatives` and `monads`.
 My recommendation is that you run only the specific test file in watch mode and solve the exercises in that order before moving to the next challenge. 😉
 
 ```sh
-$ npm t -- functors --watch
-$ npm t -- applicatives --watch
-$ npm t -- monads --watch
+$ bun test --watch functors
+$ bun test --watch applicatives
+$ bun test --watch monads
 ```
 
 Happy coding! ⚡️
