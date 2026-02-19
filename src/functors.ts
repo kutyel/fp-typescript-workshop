@@ -1,4 +1,4 @@
-import { pipe, Option, Either, String, Predicate, Effect } from 'effect'
+import { pipe, Option, Result, String, Predicate, Effect } from 'effect'
 
 import { User, getPost } from '..'
 
@@ -16,12 +16,12 @@ export const head = <A>(xs: ReadonlyArray<A>): Option.Option<A> =>
 // Exercise 3
 // Use map/flatMap and String to return the first letter of the user's name.
 
-// HINT: String.at(0) :: string -> Option<string>
+// HINT: String.at(0)
 export const initial = (user?: User) =>
   pipe(
-    Option.fromNullable(user),
+    Option.fromNullishOr(user),
     Option.map((user) => user.name),
-    Option.flatMap(String.at(0))
+    Option.map(String.at(0)),
   )
 
 // Exercise 4
@@ -40,38 +40,38 @@ export const safeNum = (n: string): Option.Option<number> =>
 // Write a function that will `getPost` then `String.toUpperCase` the post's title.
 export const getPostThenUpper: Effect.Effect<Uppercase<string>, never, never> = getPost(1).pipe(
   Effect.map((x) => x.title),
-  Effect.map(String.toUpperCase)
+  Effect.map(String.toUpperCase),
 )
 
 // Exercise 6
 // Write a function that uses `checkActive` to grant access or return the error.
-const checkActive = (user: User): Either.Either<User, string> =>
-  user.active ? Either.right(user) : Either.left('Your account is not active')
+const checkActive = (user: User): Result.Result<User, string> =>
+  user.active ? Result.succeed(user) : Result.fail('Your account is not active')
 
-// eitherWelcome :: User -> Either<string, string>
+// eitherWelcome :: User -> Result<string, string>
 export const eitherWelcome = (user: User) =>
   pipe(
     checkActive(user),
-    Either.map((x) => x.name),
-    Either.map((x) => `Welcome ${x}`)
+    Result.map((x) => x.name),
+    Result.map((x) => `Welcome ${x}`),
   )
 
 // Exercise 7
 // Write a validation function that checks for a length > 3.
-export const validateName = (name: string): Either.Either<string, string> =>
-  name.length > 3 ? Either.right(name) : Either.left('You need > 3')
+export const validateName = (name: string): Result.Result<string, string> =>
+  name.length > 3 ? Result.succeed(name) : Result.fail('You need > 3')
 
 // Exercise 8
-// Use `validateName` above and Either/Effect to `save` the user or return the error message.
+// Use `validateName` above and Result/Effect to `save` the user or return the error message.
 const save = (name: string) => Effect.succeed({ name, id: 1 })
 
 // HINT: Effect.match!
 export const register = (name: string) =>
   pipe(
-    validateName(name),
-    Effect.flatMap(save), // Either is a subtype of Effect! 😎
+    Effect.fromResult(validateName(name)),
+    Effect.flatMap(save),
     Effect.match({
       onFailure: (error) => `Failure: ${error}`,
       onSuccess: (user) => `Success: ${user.name} saved!`,
-    })
+    }),
   )

@@ -1,4 +1,4 @@
-import { Option, Either, Effect } from 'effect'
+import { Option, Result, Effect } from 'effect'
 import { expect, test, describe } from 'bun:test'
 
 import {
@@ -49,7 +49,7 @@ describe('Applicatives', () => {
   })
 
   test('Write an Effect that gets both player1 and player2 from the cache and starts the game.', () => {
-    expect(Effect.runSync(startGame('player1', 'player2'))).toEqual(Either.right('toby vs sally'))
-    expect(Effect.runSync(startGame('player1', 'player3'))).toEqual(Either.left('Player not found'))
+    expect(Effect.runSync(startGame('player1', 'player2'))).toEqual(Result.succeed('toby vs sally'))
+    expect(Effect.runSync(startGame('player1', 'player3'))).toEqual(Result.fail('Player not found'))
   })
 })

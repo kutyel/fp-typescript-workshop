@@ -3,20 +3,15 @@ import { pipe, Option, Number, Effect } from 'effect'
 import { getPost, getComments, Post, Comment } from '..'
 
 // Exercise 1
-// Write a function that adds two possibly null numbers together using `Option.ap`.
+// Write a function that adds two possibly null numbers together using `Option.zipWith`.
 export const safeAdd = (x: number | null, y: number | null): Option.Option<number> =>
-  pipe(
-    // We need to force TypeScript here to pick the curried version of Number.sum 🤓
-    Option.some<(a: number) => (b: number) => number>(Number.sum),
-    Option.ap(Option.fromNullable(x)),
-    Option.ap(Option.fromNullable(y))
-  )
+  Option.zipWith(Option.fromNullishOr(x), Option.fromNullishOr(y), Number.sum)
 
 // Exercise 2
 // Now write a function that takes 2 Option parameters and adds them. Use `Option.zipWith`.
 export const safeAddWithZip = (
   op1: Option.Option<number>,
-  op2: Option.Option<number>
+  op2: Option.Option<number>,
 ): Option.Option<number> => Option.zipWith(op1, op2, Number.sum)
 
 // Exercise 3
@@ -29,15 +24,11 @@ export const safeAddWithLift = Option.lift2(Number.sum)
 const renderComments = (xs: Comment[]) =>
   xs.reduce((acc: string, c: Comment): string => `${acc}<li>${c.body}</li>`, '')
 
-const render = (post: Post) => (comments: Comment[]) =>
+const render = (post: Post, comments: Comment[]) =>
   `<div>${post.title}</div><ul>${renderComments(comments)}</ul>`
 
 // REMINDER: the postId is totally irrelevant
-export const renderDOM = pipe(
-  Effect.succeed(render),
-  Effect.ap(getPost(1)),
-  Effect.ap(getComments(1))
-)
+export const renderDOM = Effect.zipWith(getPost(1), getComments(1), render)
 
 // Exercise 5
 // Do the same thing as above but now render all posts using `Effect.all`.
@@ -62,16 +53,8 @@ const storage = new Map<string, string>([
 ])
 const getFromCache = (x: string) =>
   storage.has(x) ? Effect.succeed(storage.get(x) ?? 'Not found') : Effect.fail('Player not found')
-const game =
-  (p1: string) =>
-  (p2: string): string =>
-    `${p1} vs ${p2}`
+const game = (p1: string, p2: string): string => `${p1} vs ${p2}`
 
-// HINT: Effect.either
+// HINT: Effect.result
 export const startGame = (p1: string, p2: string) =>
-  pipe(
-    Effect.succeed(game),
-    Effect.ap(getFromCache(p1)),
-    Effect.ap(getFromCache(p2)),
-    Effect.either
-  )
+  Effect.zipWith(getFromCache(p1), getFromCache(p2), game).pipe(Effect.result)

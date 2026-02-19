@@ -1,4 +1,4 @@
-import { Option, Either, Effect } from 'effect'
+import { Option, Result, Effect } from 'effect'
 import { expect, test, describe } from 'bun:test'
 
 import { User } from '..'
@@ -43,16 +43,16 @@ describe('Functors', () => {
 
   test('Write a function that uses `checkActive` to grant access or return the error.', () => {
     expect(eitherWelcome({ id: 1, name: 'Flavio', active: true })).toEqual(
-      Either.right('Welcome Flavio')
+      Result.succeed('Welcome Flavio')
     )
     expect(eitherWelcome({ id: 2, name: 'Yannick', active: false })).toEqual(
-      Either.left('Your account is not active')
+      Result.fail('Your account is not active')
     )
   })
 
   test('Write a validation function that checks for a length > 3.', () => {
-    expect(validateName('hello')).toEqual(Either.right('hello'))
-    expect(validateName('fla')).toEqual(Either.left('You need > 3'))
+    expect(validateName('hello')).toEqual(Result.succeed('hello'))
+    expect(validateName('fla')).toEqual(Result.fail('You need > 3'))
   })
 
   test('Use `validateName` above and Either/Effect to save the user or return the error message.', () => {
