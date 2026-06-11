@@ -1,23 +1,25 @@
-import { pipe, Option, Number, Effect } from 'effect'
+import { pipe, Option, Number, Result, Effect } from 'effect'
 
-import { getPost, getComments, Post, Comment } from '..'
+import { TODO, getPost, getComments, Post, Comment } from '..'
 
 // Exercise 1
 // Write a function that adds two possibly null numbers together using `Option.zipWith`.
-export const safeAdd = (x: number | null, y: number | null): Option.Option<number> =>
-  Option.zipWith(Option.fromNullishOr(x), Option.fromNullishOr(y), Number.sum)
+export const safeAdd = (x: number | null, y: number | null): Option.Option<number> => TODO()
 
 // Exercise 2
 // Now write a function that takes 2 Option parameters and adds them. Use `Option.zipWith`.
 export const safeAddWithZip = (
   op1: Option.Option<number>,
   op2: Option.Option<number>,
-): Option.Option<number> => Option.zipWith(op1, op2, Number.sum)
+): Option.Option<number> => TODO()
 
 // Exercise 3
 // Now write a function that takes 2 Option parameters and adds them. Use `Option.lift2`.
 // safeAdd :: Option<number> -> Option<number> -> Option<number>
-export const safeAddWithLift = Option.lift2(Number.sum)
+export const safeAddWithLift: {
+  (op1: Option.Option<number>, op2: Option.Option<number>): Option.Option<number>
+  (op1: Option.Option<number>): (op2: Option.Option<number>) => Option.Option<number>
+} = TODO
 
 // Exercise 4
 // Run both `getPost` and `getComments` then render the page with both.
@@ -28,22 +30,18 @@ const render = (post: Post, comments: Comment[]) =>
   `<div>${post.title}</div><ul>${renderComments(comments)}</ul>`
 
 // REMINDER: the postId is totally irrelevant
-export const renderDOM = Effect.zipWith(getPost(1), getComments(1), render)
+export const renderDOM: Effect.Effect<string, never, never> = Effect.sync(TODO)
 
 // Exercise 5
 // Do the same thing as above but now render all posts using `Effect.all`.
 const renderAll = ([post, comments]: [Post, Comment[]]) =>
   `<div>${post.title}</div><ul>${renderComments(comments)}</ul>`
 
-export const renderAllDOM = Effect.all([getPost(1), getComments(1)]).pipe(Effect.map(renderAll))
+export const renderAllDOM: Effect.Effect<string, never, never> = Effect.sync(TODO)
 
 // Exercise 6
 // Do the same thing as above but now using generator syntax!
-export const renderGenDOM = Effect.gen(function* () {
-  const posts = yield* getPost(1)
-  const comments = yield* getComments(1)
-  return renderAll([posts, comments])
-})
+export const renderGenDOM: Effect.Effect<string, never, never> = Effect.sync(TODO)
 
 // Exercise 7
 // Write an Effect that gets both player1 and player2 from the cache and starts the game.
@@ -56,5 +54,7 @@ const getFromCache = (x: string) =>
 const game = (p1: string, p2: string): string => `${p1} vs ${p2}`
 
 // HINT: Effect.result
-export const startGame = (p1: string, p2: string) =>
-  Effect.zipWith(getFromCache(p1), getFromCache(p2), game).pipe(Effect.result)
+export const startGame = (
+  p1: string,
+  p2: string,
+): Effect.Effect<Result.Result<string, string>, never, never> => TODO()

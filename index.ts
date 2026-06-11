@@ -24,6 +24,11 @@ export interface Comment {
 
 export type EmptyObj = Record<PropertyKey, never>
 
+// Placeholder for the exercises you have to complete!
+export const TODO = (): never => {
+  throw new Error('Not implemented yet, complete this exercise! 💪')
+}
+
 export const getPost = (id: number): Effect.Effect<Post, never, never> =>
   Effect.gen(function* () {
     yield* Effect.sleep('0.3 seconds')
