@@ -10,10 +10,10 @@
     "bun-types": "latest"
   },
   "peerDependencies": {
-    "typescript": "^5.8.3"
+    "typescript": "^6.0.3"
   },
   "dependencies": {
-    "@effect/language-service": "^0.75.0",
+    "@effect/language-service": "^0.86.2",
     "effect": "4.0.0-beta.0"
   }
 }
